@@ -30,7 +30,7 @@ const AppBar = () => {
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <AppsIcon sx={{ color: "primary.main" }} />
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-            <BookmarkIcon sx={{ color: "primary.main" }} />
+            <BookmarkIcon sx={{ color: "primary.main" }} fontSize="small" />
             <Typography
               variant="span"
               sx={{
@@ -54,16 +54,19 @@ const AppBar = () => {
             type="search"
             size="small"
           />
+
           <ModeSelect />
 
           <Tooltip title="Notifications">
             <Badge color="secondary" variant="dot" sx={{ cursor: "pointer" }}>
-              <NotificationsNoneIcon />
+              <NotificationsNoneIcon sx={{ color: "primary.main" }} />
             </Badge>
           </Tooltip>
 
           <Tooltip title="Help">
-            <HelpOutlineIcon sx={{ cursor: "pointer" }} />
+            <HelpOutlineIcon
+              sx={{ cursor: "pointer", color: "primary.main" }}
+            />
           </Tooltip>
           <Profiles />
         </Box>
