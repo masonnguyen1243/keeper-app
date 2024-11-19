@@ -7,9 +7,10 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
-import { Tooltip } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { capitalizeFirstLetter } from "~/utilities/formatters";
 
 const MENU_STYLE = {
   color: "white",
@@ -25,7 +26,7 @@ const MENU_STYLE = {
   },
 };
 
-const BoardBar = () => {
+const BoardBar = ({ board }) => {
   return (
     <>
       <Box
@@ -38,7 +39,6 @@ const BoardBar = () => {
           gap: 2,
           paddingX: 2,
           overflow: "auto",
-          borderBottom: "1px solid white",
           backgroundColor: (theme) =>
             theme.palette.mode === "dark" ? "#34495e" : "#1976d2",
         }}
@@ -47,13 +47,13 @@ const BoardBar = () => {
           <Chip
             sx={MENU_STYLE}
             icon={<DashboardIcon />}
-            label="Mason Nguyen"
+            label={board?.title}
             clickable
           />
           <Chip
             sx={MENU_STYLE}
             icon={<VpnLockIcon />}
-            label="Public/Private Workspace"
+            label={capitalizeFirstLetter(board?.type)}
             clickable
           />
           <Chip
