@@ -350,13 +350,16 @@ const BoardContent = ({ board }) => {
       //Tìm các điểm giao nhau va chạm - intersections với con trỏ
       const pointerIntersections = pointerWithin(args);
 
+      if (!pointerIntersections?.length) return;
+
       //Thuật toán phát hiện va chạm sẽ trả về 1 mảng các va chạm ở đây
-      const intersections = !!pointerIntersections?.length
-        ? pointerIntersections
-        : rectIntersection(args);
+      // const intersections =
+      //   pointerIntersections?.length > 0
+      //     ? pointerIntersections
+      //     : rectIntersection(args);
 
       //Tìm cái overId đầu tiên trong đám intersections ở trên
-      let overId = getFirstCollision(intersections, "id");
+      let overId = getFirstCollision(pointerIntersections, "id");
       // console.log(overId);
       if (overId) {
         const checkColumn = orderedColumns.find(
@@ -364,7 +367,7 @@ const BoardContent = ({ board }) => {
         );
 
         if (checkColumn) {
-          overId = closestCenter({
+          overId = closestCorners({
             ...args,
             droppableContainers: args.droppableContainers.filter(
               (container) => {
