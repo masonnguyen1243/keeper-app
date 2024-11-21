@@ -11,8 +11,12 @@ import {
   DragOverlay,
   defaultDropAnimationSideEffects,
   closestCorners,
+  closestCenter,
+  pointerWithin,
+  rectIntersection,
+  getFirstCollision,
 } from "@dnd-kit/core";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import Column from "./ListColumns/Column/Column";
@@ -50,6 +54,9 @@ const BoardContent = ({ board }) => {
   const [activeDragItemData, setActiveDragItemIdData] = useState(null);
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] =
     useState(null);
+
+  //Điểm va chạm cuối cùng trước đó (xử lý thuật toán phát hiện va chạm)
+  const lastOverId = useRef(null);
 
   useEffect(() => {
     setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, "_id"));
@@ -333,11 +340,62 @@ const BoardContent = ({ board }) => {
     }),
   };
 
+  //args: cac doi so. tham so
+  const collisionDetectionStrategy = useCallback(
+    (args) => {
+      if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+        return closestCorners({ ...args });
+      }
+
+      //Tìm các điểm giao nhau va chạm - intersections với con trỏ
+      const pointerIntersections = pointerWithin(args);
+
+      //Thuật toán phát hiện va chạm sẽ trả về 1 mảng các va chạm ở đây
+      const intersections = !!pointerIntersections?.length
+        ? pointerIntersections
+        : rectIntersection(args);
+
+      //Tìm cái overId đầu tiên trong đám intersections ở trên
+      let overId = getFirstCollision(intersections, "id");
+      // console.log(overId);
+      if (overId) {
+        const checkColumn = orderedColumns.find(
+          (column) => column._id === overId
+        );
+
+        if (checkColumn) {
+          overId = closestCenter({
+            ...args,
+            droppableContainers: args.droppableContainers.filter(
+              (container) => {
+                return (
+                  container.id !== overId &&
+                  checkColumn?.cardOrderIds?.includes(container.id)
+                );
+              }
+            ),
+          })[0]?.id;
+        }
+
+        lastOverId.current = overId;
+        return [{ id: overId }];
+      }
+
+      //Nếu overId là null thì trả về mảng rỗng - tránh bug crash trang
+      return lastOverId.current ? [{ id: lastOverId.current }] : [];
+    },
+
+    [activeDragItemType, orderedColumns]
+  );
+
   return (
     <DndContext
       sensors={sensors}
       //Thuật toán phát hiện va chạm
-      collisionDetection={closestCorners}
+      // collisionDetection={closestCorners}
+
+      //Fix bug xử lý va chạm
+      collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
