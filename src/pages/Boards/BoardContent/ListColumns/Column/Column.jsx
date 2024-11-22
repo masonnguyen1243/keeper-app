@@ -23,6 +23,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { toast } from "react-toastify";
 
 const Column = ({ column }) => {
   //Drag and Drop
@@ -67,6 +68,7 @@ const Column = ({ column }) => {
   const addNewCard = () => {
     if (!newCardTitle) {
       // console.error("Nhap vao title");
+      toast.error("Please enter Card Title", { position: "bottom-right" });
       return;
     }
     // console.log(newCardTitle);
