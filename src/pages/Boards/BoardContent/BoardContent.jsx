@@ -31,7 +31,12 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAG_ITEM_TYPE_CARD",
 };
 
-const BoardContent = ({ board, createNewColumn, createNewCard }) => {
+const BoardContent = ({
+  board,
+  createNewColumn,
+  createNewCard,
+  moveColumns,
+}) => {
   const pointerSensor = useSensor(PointerSensor, {
     //https://docs.dndkit.com/api-documentation/sensors
     activationConstraint: { distance: 10 },
@@ -236,7 +241,7 @@ const BoardContent = ({ board, createNewColumn, createNewCard }) => {
     //Kiem tra neu ko ton tai 1 trong 2 (keo ra ngoai thi return luon) thi k lam gi ca
     if (!active || !over) return;
 
-    //Xử lý kéo thả card
+    //Xử lý kéo thả card trong boardContent
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
       //activeDraggingCardData là cái card đang được kéo
       const {
@@ -324,14 +329,14 @@ const BoardContent = ({ board, createNewColumn, createNewCard }) => {
           oldColumnIndex,
           newColumnIndex
         );
-        //Sau dung API thi dung
-        // const dndOrderedColumnsIds = dndOrderedColumns.map(
-        //   (column) => column._id
-        // );
-        // console.log("dndOrderedColumns", dndOrderedColumns);
-        // console.log("dndOrderedColumnsIds", dndOrderedColumnsIds);
 
-        //Cap nhat lai state columns ban dau sau khi da keo tha
+        /**
+         * Gọi lên prop func moveColumns nằm ở component cha cao nhất (boards/_id.jsx)
+         * Gọi luôn API ở đây thay vì phải lần lượt gọi ngược lên những components cha phía trên
+         */
+        moveColumns(dndOrderedColumns);
+
+        //Cap nhat lai state columns ban dau sau khi da keo tha để tránh delay hoặc flickering giao diện lúc kéo thả
         setOrderedColumns(dndOrderedColumns);
       }
     }
