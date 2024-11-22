@@ -31,7 +31,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAG_ITEM_TYPE_CARD",
 };
 
-const BoardContent = ({ board }) => {
+const BoardContent = ({ board, createNewColumn, createNewCard }) => {
   const pointerSensor = useSensor(PointerSensor, {
     //https://docs.dndkit.com/api-documentation/sensors
     activationConstraint: { distance: 10 },
@@ -299,8 +299,6 @@ const BoardContent = ({ board }) => {
           targetColumn.cards = dndOrderedCards;
           targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id);
 
-          console.log("targetColumn", targetColumn);
-
           //Trả về giá trị state mới (chuẩn vị trí)
           return nextColumns;
         });
@@ -427,7 +425,11 @@ const BoardContent = ({ board }) => {
           p: "10px 0",
         }}
       >
-        <ListColumns columns={orderedColumns} />
+        <ListColumns
+          columns={orderedColumns}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}
+        />
         <DragOverlay dropAnimation={customDropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && (

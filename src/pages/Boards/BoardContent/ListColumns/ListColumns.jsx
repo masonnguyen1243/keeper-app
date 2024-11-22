@@ -12,20 +12,29 @@ import {
 } from "@dnd-kit/sortable";
 import { toast } from "react-toastify";
 
-const ListColumns = ({ columns }) => {
+const ListColumns = ({ columns, createNewColumn, createNewCard }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const toggleOpenNewColumnForm = () => {
     setOpenNewColumnForm(!openNewColumnForm);
   };
 
   const [newColumnTitle, setNewColumnTitle] = useState("");
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error("Please enter Column Title");
       return;
     }
-    // console.log(newColumnTitle);
-    //Call API here
+
+    //Tạo dữ liệu để gọi API
+    const newColumnData = {
+      title: newColumnTitle,
+    };
+
+    /**
+     * Gọi lên prop func createNewColumn nằm ở component cha cao nhất (boards/_id.jsx)
+     * Gọi luôn API ở đây thay vì phải lần lượt gọi ngược lên những components cha phía trên
+     */
+    await createNewColumn(newColumnData);
 
     //Đóng trạng thái khi thêm column mới và clear input
     toggleOpenNewColumnForm();
@@ -51,7 +60,11 @@ const ListColumns = ({ columns }) => {
         }}
       >
         {columns?.map((column) => (
-          <Column key={column._id} column={column} />
+          <Column
+            key={column._id}
+            column={column}
+            createNewCard={createNewCard}
+          />
         ))}
 
         {/* Box add new column */}

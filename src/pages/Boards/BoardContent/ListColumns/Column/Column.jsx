@@ -25,7 +25,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "react-toastify";
 
-const Column = ({ column }) => {
+const Column = ({ column, createNewCard }) => {
   //Drag and Drop
   const {
     attributes,
@@ -65,14 +65,24 @@ const Column = ({ column }) => {
   };
 
   const [newCardTitle, setNewCardTitle] = useState("");
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       // console.error("Nhap vao title");
       toast.error("Please enter Card Title", { position: "bottom-right" });
       return;
     }
-    // console.log(newCardTitle);
-    //Call API here
+
+    //Tạo dữ liệu để gọi API
+    const newCardData = {
+      title: newCardTitle,
+      columnId: column._id,
+    };
+
+    /**
+     * Gọi lên prop func createNewCard nằm ở component cha cao nhất (boards/_id.jsx)
+     * Gọi luôn API ở đây thay vì phải lần lượt gọi ngược lên những components cha phía trên
+     */
+    await createNewCard(newCardData);
 
     //Đóng trạng thái khi thêm card mới và clear input
     toggleOpenNewCardForm();
