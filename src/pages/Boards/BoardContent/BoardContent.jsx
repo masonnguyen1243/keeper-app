@@ -38,6 +38,7 @@ const BoardContent = ({
   moveColumns,
   moveCardInTheSameColumn,
   moveCardToDifferentColumns,
+  deleteColumnDetails,
 }) => {
   const pointerSensor = useSensor(PointerSensor, {
     //https://docs.dndkit.com/api-documentation/sensors
@@ -461,6 +462,7 @@ const BoardContent = ({
           columns={orderedColumns}
           createNewColumn={createNewColumn}
           createNewCard={createNewCard}
+          deleteColumnDetails={deleteColumnDetails}
         />
         <DragOverlay dropAnimation={customDropAnimation}>
           {!activeDragItemType && null}

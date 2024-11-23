@@ -12,7 +12,12 @@ import {
 } from "@dnd-kit/sortable";
 import { toast } from "react-toastify";
 
-const ListColumns = ({ columns, createNewColumn, createNewCard }) => {
+const ListColumns = ({
+  columns,
+  createNewColumn,
+  createNewCard,
+  deleteColumnDetails,
+}) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const toggleOpenNewColumnForm = () => {
     setOpenNewColumnForm(!openNewColumnForm);
@@ -64,6 +69,7 @@ const ListColumns = ({ columns, createNewColumn, createNewCard }) => {
             key={column._id}
             column={column}
             createNewCard={createNewCard}
+            deleteColumnDetails={deleteColumnDetails}
           />
         ))}
 
