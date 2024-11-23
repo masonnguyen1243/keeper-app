@@ -17,7 +17,6 @@ import AddCardIcon from "@mui/icons-material/AddCard";
 import Button from "@mui/material/Button";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import ListCards from "./ListCards/ListCards";
-import { mapOrder } from "~/utilities/sort";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -56,7 +55,7 @@ const Column = ({ column, createNewCard }) => {
   };
 
   //Sort array
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, "_id");
+  const orderedCards = column.cards;
 
   //
   const [openNewCardForm, setOpenNewCardForm] = useState(false);

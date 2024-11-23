@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import Box from "@mui/material/Box";
 import ListColumns from "./ListColumns/ListColumns";
-import { mapOrder } from "~/utilities/sort";
 import {
   DndContext,
   PointerSensor,
@@ -36,6 +36,8 @@ const BoardContent = ({
   createNewColumn,
   createNewCard,
   moveColumns,
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumns,
 }) => {
   const pointerSensor = useSensor(PointerSensor, {
     //https://docs.dndkit.com/api-documentation/sensors
@@ -67,10 +69,10 @@ const BoardContent = ({
   const lastOverId = useRef(null);
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, "_id"));
+    setOrderedColumns(board.columns);
   }, [board]);
 
-  //Cập nhật lại State trong trường hợp di chuyển Card giữa các Column
+  //Cập nhật lại State trong trường hợp di chuyển Card giữa các Column khác nhau
   const moveCardBetweenDifferentColumns = (
     overColumn,
     overCardId,
@@ -78,7 +80,8 @@ const BoardContent = ({
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns((prevColumns) => {
       //Tìm vị trí index của overCard trong column đích (nơi activeCard sắp được thả)
@@ -160,6 +163,15 @@ const BoardContent = ({
         );
       }
 
+      if (triggerFrom === "handleDragEnd") {
+        moveCardToDifferentColumns(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        );
+      }
+
       return nextColumns;
     });
   };
@@ -227,7 +239,8 @@ const BoardContent = ({
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        "handleDragOver"
       );
     }
   };
@@ -269,7 +282,8 @@ const BoardContent = ({
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          "handleDragEnd"
         );
       } else {
         //Hành động kéo thả card trong cùng 1 column
@@ -290,6 +304,9 @@ const BoardContent = ({
           newCardIndex
         );
 
+        const dndOrderedCardIds = dndOrderedCards.map((card) => card._id);
+
+        //Gọi lại state ở đây để tránh delay hoặc flickering giao diện lúc kéo thả
         setOrderedColumns((prevColumns) => {
           //Clone mảng OrderedColumnState cũ ra một cái mới để xử lý data rồi return
           //- cập nhật lại OrderedColumnState mới
@@ -302,11 +319,21 @@ const BoardContent = ({
 
           //Cập nhật lại 2 giá trị mới là card à cardOrderIds trong cái targetColumn
           targetColumn.cards = dndOrderedCards;
-          targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id);
+          targetColumn.cardOrderIds = dndOrderedCardIds;
 
           //Trả về giá trị state mới (chuẩn vị trí)
           return nextColumns;
         });
+
+        /**
+         * Gọi lên prop func moveCardInTheSameColumn nằm ở component cha cao nhất (boards/_id.jsx)
+         * Gọi luôn API ở đây thay vì phải lần lượt gọi ngược lên những components cha phía trên
+         */
+        moveCardInTheSameColumn(
+          dndOrderedCards,
+          dndOrderedCardIds,
+          oldColumnWhenDraggingCard._id
+        );
       }
     }
 
@@ -330,14 +357,14 @@ const BoardContent = ({
           newColumnIndex
         );
 
+        //Cap nhat lai state columns ban dau sau khi da keo tha để tránh delay hoặc flickering giao diện lúc kéo thả
+        setOrderedColumns(dndOrderedColumns);
+
         /**
          * Gọi lên prop func moveColumns nằm ở component cha cao nhất (boards/_id.jsx)
          * Gọi luôn API ở đây thay vì phải lần lượt gọi ngược lên những components cha phía trên
          */
         moveColumns(dndOrderedColumns);
-
-        //Cap nhat lai state columns ban dau sau khi da keo tha để tránh delay hoặc flickering giao diện lúc kéo thả
-        setOrderedColumns(dndOrderedColumns);
       }
     }
 
