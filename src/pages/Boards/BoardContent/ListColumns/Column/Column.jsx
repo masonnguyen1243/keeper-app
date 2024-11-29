@@ -6,13 +6,10 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ContentCut from "@mui/icons-material/ContentCut";
-import Cloud from "@mui/icons-material/Cloud";
 import Divider from "@mui/material/Divider";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Tooltip from "@mui/material/Tooltip";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { ContentCopy, ContentPaste } from "@mui/icons-material";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import Button from "@mui/material/Button";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
@@ -179,24 +176,7 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
                 </ListItemIcon>
                 <ListItemText>Add new card</ListItemText>
               </MenuItem>
-              <MenuItem onClick={() => handleClose()}>
-                <ListItemIcon>
-                  <ContentCut fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Cut</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={() => handleClose()}>
-                <ListItemIcon>
-                  <ContentCopy fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Copy</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={() => handleClose()}>
-                <ListItemIcon>
-                  <ContentPaste fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Page</ListItemText>
-              </MenuItem>
+
               <Divider />
               <MenuItem
                 onClick={() => handleDeleteColumn()}
@@ -214,12 +194,6 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
                   />
                 </ListItemIcon>
                 <ListItemText>Delete this column</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={() => handleClose()}>
-                <ListItemIcon>
-                  <Cloud fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Archive this column</ListItemText>
               </MenuItem>
             </Menu>
           </Box>

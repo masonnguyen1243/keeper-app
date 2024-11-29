@@ -4,7 +4,6 @@ import { API_ROOT } from "~/utilities/constants";
 //Boards
 export const fetchBoardDetailsAPI = async (boardId) => {
   const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`);
-  //Axios se tra du lieu ra data
   return response.data;
 };
 

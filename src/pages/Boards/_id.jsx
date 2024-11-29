@@ -23,7 +23,8 @@ const Board = () => {
   const [board, setBoard] = useState(null);
 
   useEffect(() => {
-    const boardId = "6741352023ca9206960d75f1";
+    const boardId = "6741f93bfd9e346c2a551336";
+
     //Call API
     fetchBoardDetailsAPI(boardId).then((board) => {
       board.columns = mapOrder(board.columns, board.columnOrderIds, "_id");
@@ -53,7 +54,7 @@ const Board = () => {
     createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id];
 
     //Cập nhật lại state board
-    //Phía FE tự cập nhật lại state data board thay vì phải gọi lại API fetchBoardDetailsAPI()
+    //Phía FE tự cập nhật lại state data board thay vì phải gọi lại API ()
     const newBoard = { ...board };
     newBoard.columns.push(createdColumn);
     newBoard.columnOrderIds.push(createdColumn._id);
@@ -146,7 +147,6 @@ const Board = () => {
     let prevCardOrderIds = dndOrderedColumns.find(
       (c) => c._id === prevColumnId
     )?.cardOrderIds;
-    console.log(prevCardOrderIds);
 
     //Xử lý vấn đề khi kéo phần tử cuối cùng ra khỏi Column
     if (prevCardOrderIds[0].includes("-placeholder-card")) {
