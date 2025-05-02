@@ -5,16 +5,12 @@ import ListColumns from "./ListColumns/ListColumns";
 import {
   DndContext,
   PointerSensor,
-  // MouseSensor,
-  // TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
   defaultDropAnimationSideEffects,
   closestCorners,
-  // closestCenter,
   pointerWithin,
-  // rectIntersection,
   getFirstCollision,
 } from "@dnd-kit/core";
 import { MouseSensor, TouchSensor } from "~/customLibraries/DndKitSensors";

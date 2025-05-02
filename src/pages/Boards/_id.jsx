@@ -23,7 +23,7 @@ const Board = () => {
   const [board, setBoard] = useState(null);
 
   useEffect(() => {
-    const boardId = "6741f93bfd9e346c2a551336";
+    const boardId = "681450b1fe2cf468e42a5c29";
 
     //Call API
     fetchBoardDetailsAPI(boardId).then((board) => {

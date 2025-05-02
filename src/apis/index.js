@@ -4,6 +4,7 @@ import { API_ROOT } from "~/utilities/constants";
 //Boards
 export const fetchBoardDetailsAPI = async (boardId) => {
   const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`);
+
   return response.data;
 };
 
@@ -16,7 +17,7 @@ export const updateBoardDetailsAPI = async (boardId, updateData) => {
   return response.data;
 };
 
-//
+//Delete Column
 export const deleteColumnDetailsAPI = async (columnId) => {
   const response = await axios.delete(`${API_ROOT}/v1/columns/${columnId}`);
   return response.data;
