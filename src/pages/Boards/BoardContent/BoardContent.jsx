@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import ListColumns from "./ListColumns/ListColumns";
 import {
   DndContext,
-  PointerSensor,
+  // PointerSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -29,17 +29,14 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 const BoardContent = ({
   board,
-  createNewColumn,
-  createNewCard,
   moveColumns,
   moveCardInTheSameColumn,
   moveCardToDifferentColumns,
-  deleteColumnDetails,
 }) => {
-  const pointerSensor = useSensor(PointerSensor, {
-    //https://docs.dndkit.com/api-documentation/sensors
-    activationConstraint: { distance: 10 },
-  });
+  // const pointerSensor = useSensor(PointerSensor, {
+  //   //https://docs.dndkit.com/api-documentation/sensors
+  //   activationConstraint: { distance: 10 },
+  // });
 
   //Yeu cau chuot di chuyen 10px thi moi kich hoat event
   const mouseSensor = useSensor(MouseSensor, {
@@ -454,12 +451,7 @@ const BoardContent = ({
           p: "10px 0",
         }}
       >
-        <ListColumns
-          columns={orderedColumns}
-          createNewColumn={createNewColumn}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
-        />
+        <ListColumns columns={orderedColumns} />
         <DragOverlay dropAnimation={customDropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && (

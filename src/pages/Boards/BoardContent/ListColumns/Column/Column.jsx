@@ -17,12 +17,21 @@ import ListCards from "./ListCards/ListCards";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import { useConfirm } from "material-ui-confirm";
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "react-toastify";
+import { createNewCardAPI, deleteColumnDetailsAPI } from "~/apis";
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard,
+} from "~/redux/activeBoard/activeBoardSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { cloneDeep } from "lodash";
 
-const Column = ({ column, createNewCard, deleteColumnDetails }) => {
+const Column = ({ column }) => {
+  const dispatch = useDispatch();
+  const board = useSelector(selectCurrentActiveBoard);
+
   //Drag and Drop
   const {
     attributes,
@@ -62,6 +71,8 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
   };
 
   const [newCardTitle, setNewCardTitle] = useState("");
+
+  //add new card
   const addNewCard = async () => {
     if (!newCardTitle) {
       // console.error("Nhap vao title");
@@ -75,11 +86,29 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
       columnId: column._id,
     };
 
-    /**
-     * Gọi lên prop func createNewCard nằm ở component cha cao nhất (boards/_id.jsx)
-     * Gọi luôn API ở đây thay vì phải lần lượt gọi ngược lên những components cha phía trên
-     */
-    await createNewCard(newCardData);
+    //Gọi API tạo mới card và làm lại dữ liệu state board
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id,
+    });
+
+    //Cập nhật lại state board
+    //Phía FE tự cập nhật lại state data board thay vì phải gọi lại API fetchBoardDetailsAPI()
+    // const newBoard = { ...board };
+
+    //Tương tự hàm createNewColumn chỗ này dùng clonedeep
+    const newBoard = cloneDeep(board);
+    const columnToUpdate = newBoard.columns.find(
+      (column) => column._id === createdCard.columnId
+    );
+
+    if (columnToUpdate) {
+      columnToUpdate.cards.push(createdCard);
+      columnToUpdate.cardOrderIds.push(createdCard._id);
+    }
+
+    // setBoard(newBoard);
+    dispatch(updateCurrentActiveBoard(newBoard));
 
     //Đóng trạng thái khi thêm card mới và clear input
     toggleOpenNewCardForm();
@@ -99,8 +128,19 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
       buttonOrder: ["confirm", "cancel"],
     })
       .then(() => {
-        //Gọi ngược lên thằng cha lớn nhất
-        deleteColumnDetails(column._id);
+        //Cập nhật lại cho chuẩn DL State Board
+        const newBoard = { ...board };
+        newBoard.columns = newBoard.columns.filter((c) => c._id !== column._id);
+        newBoard.columnOrderIds = newBoard.columnOrderIds.filter(
+          (_id) => _id !== column._id
+        );
+        // setBoard(newBoard);
+        dispatch(updateCurrentActiveBoard(newBoard));
+
+        //Call API
+        deleteColumnDetailsAPI(column._id).then((res) => {
+          toast.success(res.deleteResult);
+        });
       })
       .catch(() => {});
   };

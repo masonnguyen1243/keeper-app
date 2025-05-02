@@ -11,19 +11,25 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { toast } from "react-toastify";
+import { generatePlaceholderCard } from "~/utilities/formatters";
+import { createNewColumnAPI } from "~/apis";
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard,
+} from "~/redux/activeBoard/activeBoardSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { cloneDeep } from "lodash";
 
-const ListColumns = ({
-  columns,
-  createNewColumn,
-  createNewCard,
-  deleteColumnDetails,
-}) => {
+const ListColumns = ({ columns }) => {
+  const dispatch = useDispatch();
+  const board = useSelector(selectCurrentActiveBoard);
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const toggleOpenNewColumnForm = () => {
     setOpenNewColumnForm(!openNewColumnForm);
   };
 
   const [newColumnTitle, setNewColumnTitle] = useState("");
+
   const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error("Please enter Column Title");
@@ -35,11 +41,33 @@ const ListColumns = ({
       title: newColumnTitle,
     };
 
-    /**
-     * Gọi lên prop func createNewColumn nằm ở component cha cao nhất (boards/_id.jsx)
-     * Gọi luôn API ở đây thay vì phải lần lượt gọi ngược lên những components cha phía trên
-     */
-    await createNewColumn(newColumnData);
+    //Gọi API tạo mới column và làm lại dữ liệu state board
+    const createdColumn = await createNewColumnAPI({
+      ...newColumnData,
+      boardId: board._id,
+    });
+
+    //Khi tạo column mới thì nó sẽ chưa có card => cần xử lý vấn đề kéo thả
+    createdColumn.cards = [generatePlaceholderCard(createdColumn)];
+    createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id];
+
+    //Cập nhật lại state board
+    //Phía FE tự cập nhật lại state data board thay vì phải gọi lại API ()
+
+    //Đoạn này sẽ dính lỗi object is not extensible
+    const newBoard = cloneDeep(board);
+    newBoard.columns.push(createdColumn);
+    newBoard.columnOrderIds.push(createdColumn._id);
+
+    //Cach 2 sử dụng array.concat thay cho push
+    // const newBoard = { ...board };
+    // newBoard.columns = newBoard.columns.concat([createdColumn]);
+    // newBoard.columnOrderIds = newBoard.columnOrderIds.concat([
+    //   createdColumn._id,
+    // ]);
+
+    //Cập nhật dữ liệu board vào trong redux store
+    dispatch(updateCurrentActiveBoard(newBoard));
 
     //Đóng trạng thái khi thêm column mới và clear input
     toggleOpenNewColumnForm();
@@ -65,12 +93,7 @@ const ListColumns = ({
         }}
       >
         {columns?.map((column) => (
-          <Column
-            key={column._id}
-            column={column}
-            createNewCard={createNewCard}
-            deleteColumnDetails={deleteColumnDetails}
-          />
+          <Column key={column._id} column={column} />
         ))}
 
         {/* Box add new column */}
