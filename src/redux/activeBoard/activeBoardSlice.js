@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import authorizeAxiosInstance from "~/utilities/authorizeAxios";
 import { API_ROOT } from "~/utilities/constants";
 import { mapOrder } from "~/utilities/sort";
 import { generatePlaceholderCard } from "~/utilities/formatters";
@@ -15,7 +15,9 @@ const initialState = {
 export const fetchBoardDetailsAPI = createAsyncThunk(
   "activeBoard/fetchBoardDetailsAPI",
   async (boardId) => {
-    const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`);
+    const response = await authorizeAxiosInstance.get(
+      `${API_ROOT}/v1/boards/${boardId}`
+    );
 
     //Axios sẽ trả kết quả qua properties là data
     return response.data;
