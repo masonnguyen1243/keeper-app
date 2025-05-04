@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -19,8 +19,12 @@ import {
   PASSWORD_CONFIRMATION_MESSAGE,
 } from "~/utilities/validators";
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
+import { registerUserAPI } from "~/apis";
+import { toast } from "react-toastify";
 
 function RegisterForm() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -29,7 +33,15 @@ function RegisterForm() {
   } = useForm();
 
   const submitRegister = (data) => {
-    console.log("Submit register data: ", data);
+    const { email, password } = data;
+
+    toast
+      .promise(registerUserAPI({ email, password }), {
+        pending: "Registration is in progress...",
+      })
+      .then((user) => {
+        navigate(`/login?registerdEmail=${user.email}`);
+      });
   };
 
   return (
