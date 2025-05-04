@@ -1,4 +1,3 @@
-import { Link, useSearchParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -19,8 +18,15 @@ import {
   FIELD_REQUIRED_MESSAGE,
 } from "~/utilities/validators";
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginUserApi } from "~/redux/user/UserSlice";
+import { toast } from "react-toastify";
 
 function LoginForm() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -32,7 +38,19 @@ function LoginForm() {
   const verifiedEmail = searchParams.get("verifiedEmail");
 
   const submitLogIn = (data) => {
-    console.log("Submit login data: ", data);
+    const { email, password } = data;
+
+    toast
+      .promise(dispatch(loginUserApi({ email, password })), {
+        pending: "Logging in...",
+      })
+      .then((res) => {
+        console.log(res);
+        //Đoạn này phải kiểm tra không có lỗi (login thành công) thì mới redirect về route "/"
+        if (!res.error) {
+          navigate("/");
+        }
+      });
   };
 
   return (

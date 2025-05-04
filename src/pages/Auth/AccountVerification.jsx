@@ -27,7 +27,7 @@ const AccountVerification = () => {
   }
 
   //Nếu chưa Verify xong thì hiện loading
-  if (verified) {
+  if (!verified) {
     return <PageLoadingSpinner caption={"Verifying..."} />;
   }
 
