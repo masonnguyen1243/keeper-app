@@ -20,7 +20,7 @@ import {
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loginUserApi } from "~/redux/user/UserSlice";
+import { loginUserApi } from "~/redux/user/userSlice";
 import { toast } from "react-toastify";
 
 function LoginForm() {
@@ -45,7 +45,6 @@ function LoginForm() {
         pending: "Logging in...",
       })
       .then((res) => {
-        console.log(res);
         //Đoạn này phải kiểm tra không có lỗi (login thành công) thì mới redirect về route "/"
         if (!res.error) {
           navigate("/");
