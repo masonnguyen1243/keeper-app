@@ -4,7 +4,9 @@ import { toast } from "react-toastify";
 
 //Boards
 // export const fetchBoardDetailsAPI = async (boardId) => {
-//   const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`);
+//   const response = await authorizeAxiosInstance.get(
+//     `${API_ROOT}/v1/boards/${boardId}`
+//   );
 
 //   return response.data;
 // };
